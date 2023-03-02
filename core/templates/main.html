@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block main %}
+    
+	<section>
+		<h3>Write something</h3>
+
+		<form action="{% url 'chatbot' %}" method="POST" class="sendmsg">
+
+			<label for="input">Your Input</label>
+			<input type="text" name="user_input" id="input" value="Hello">
+			<button class="btn submit-btn">Send</button>
+			
+			<ul class="chat">
+				<li class="message">Hello! I beg you please ask anything to me ☹</li>
+			</ul>
+		</form>
+
+	</section>
+
+{% endblock main %}
+
+{% block scripts %}
+<script>
+	let chatResponse = document.querySelector('.response')
+	let form = document.querySelector('form')
+	let responseList = document.querySelector('.chat')
+	let submitBtn = document.querySelector('.submit-btn')
+	
+	form.addEventListener('submit', async (event) =>{
+		event.preventDefault()
+
+		const userInput = form.elements.user_input.value
+
+		const formData = new FormData()
+		formData.append('user_input', userInput)
+
+		fetch('{% url "chatbot" %}', {
+			method: 'POST',
+			body: formData,
+		})
+		.then(response => response.json())
+		.then(data => {
+			const listItem = document.createElement('li')
+			listItem.classList.add('response')
+			listItem.textContent = data.response
+			responseList.appendChild(listItem)
+			console.log(data.text)
+		})
+		.catch(error => {
+			console.log('Error fetching:', error)
+		})
+	})
+</script>
+{% endblock scripts %}
